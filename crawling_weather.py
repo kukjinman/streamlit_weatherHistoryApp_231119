@@ -17,8 +17,21 @@ def dateReader(date_):
     day = date_object.day
     return year, month, day
 
-def dateSelector(browser_, sel_date_, index_):
 
+def dataReadertwo(date_):
+    parts = date_.split(' — ', 2)
+    date_string_modified = parts[0]
+
+    date_object = datetime.strptime(date_string_modified, "%Y년 %m월 %d일 %A")
+
+    year = date_object.year
+    month = date_object.month
+    day = date_object.day
+
+    return year, month, day
+
+
+def dateSelector(browser_, sel_date_, index_):
     selmonth = Select(browser_.find_element(By.CSS_SELECTOR, "div.tb-select select#month"))
     selmonth.select_by_index(index_)
 
@@ -39,9 +52,7 @@ def dateSelector(browser_, sel_date_, index_):
             break
 
 
-def crwalingweather(city,sel_date):
-
-
+def crwalingweather(city, sel_date):
     options = webdriver.ChromeOptions()
     options.add_experimental_option('detach', True)
     options.add_argument("headless")
@@ -68,12 +79,11 @@ def crwalingweather(city,sel_date):
 
     browser.get(href_pastweather)
     time.sleep(0.5)
-    cur_date = browser.find_element(By.CSS_SELECTOR,"div.weatherTooltip div.date")
+    cur_date = browser.find_element(By.CSS_SELECTOR, "div.weatherTooltip div.date")
     print(f'cur city : {cur_date.text} ')
-    cur_year, cur_month, cur_day = dateReader(cur_date.text)
+    cur_year, cur_month, cur_day = dataReadertwo(cur_date.text)
 
     print(f"year : {cur_year}, month : {cur_month}, day : {cur_day}")
-
 
     move_index = 0
 
@@ -89,41 +99,40 @@ def crwalingweather(city,sel_date):
         move_index += (cur_year - sel_date.year) * 12
         move_index += cur_month - sel_date.month + 1
 
-
     # 1년 전 data
-    dateSelector(browser, sel_date,move_index)
+    dateSelector(browser, sel_date, move_index)
     time.sleep(0.5)
 
-    one_year_ago_temp = browser.find_element(By.CSS_SELECTOR,"div.tempblock div.temp").text
-    one_year_ago_wdesc = browser.find_element(By.CSS_SELECTOR,"div.tempblock div.wdesc").text
+    one_year_ago_temp = browser.find_element(By.CSS_SELECTOR, "div.tempblock div.temp").text
+    one_year_ago_wdesc = browser.find_element(By.CSS_SELECTOR, "div.tempblock div.wdesc").text
     print(one_year_ago_temp)
     print(one_year_ago_wdesc)
     time.sleep(0.5)
 
     # 2년 전 data
 
-    dateSelector(browser, sel_date,move_index + 12)
+    dateSelector(browser, sel_date, move_index + 12)
     time.sleep(0.5)
 
-    two_year_ago_temp = browser.find_element(By.CSS_SELECTOR,"div.tempblock div.temp").text
-    two_year_ago_wdesc = browser.find_element(By.CSS_SELECTOR,"div.tempblock div.wdesc").text
+    two_year_ago_temp = browser.find_element(By.CSS_SELECTOR, "div.tempblock div.temp").text
+    two_year_ago_wdesc = browser.find_element(By.CSS_SELECTOR, "div.tempblock div.wdesc").text
     print(two_year_ago_temp)
     print(two_year_ago_wdesc)
 
     # 2년 전 data
     time.sleep(0.5)
 
-    dateSelector(browser, sel_date,move_index + 24)
+    dateSelector(browser, sel_date, move_index + 24)
     time.sleep(0.5)
 
-    three_year_ago_temp = browser.find_element(By.CSS_SELECTOR,"div.tempblock div.temp").text
-    three_year_ago_wdesc = browser.find_element(By.CSS_SELECTOR,"div.tempblock div.wdesc").text
+    three_year_ago_temp = browser.find_element(By.CSS_SELECTOR, "div.tempblock div.temp").text
+    three_year_ago_wdesc = browser.find_element(By.CSS_SELECTOR, "div.tempblock div.wdesc").text
     print(three_year_ago_temp)
     print(three_year_ago_wdesc)
     time.sleep(0.5)
 
     return {
-        'one_year_ago_temp':one_year_ago_temp,
+        'one_year_ago_temp': one_year_ago_temp,
         'one_year_ago_wdesc': one_year_ago_wdesc,
         'two_year_ago_temp': two_year_ago_temp,
         'two_year_ago_wdesc': two_year_ago_wdesc,
@@ -132,10 +141,9 @@ def crwalingweather(city,sel_date):
     }
 
 
-
 def test_code():
     test_date = "2022-01-05"
     parse_date = datetime.strptime(test_date, "%Y-%m-%d")
-    crwalingweather("seoul",parse_date)
+    crwalingweather("seoul", parse_date)
 
 # test_code()
