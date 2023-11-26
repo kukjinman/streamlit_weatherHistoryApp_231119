@@ -18,11 +18,12 @@ def dateReader(date_):
     return year, month, day
 
 
-def dataReadertwo(date_):
+def dataReaderKorean(date_):
     parts = date_.split(' — ', 2)
     date_string_modified = parts[0]
+    date_, time_ = date_string_modified.split(', ')
 
-    date_object = datetime.strptime(date_string_modified, "%Y년 %m월 %d일 %A")
+    date_object = datetime.strptime(date_, "%Y년 %m월 %d일 %A")
 
     year = date_object.year
     month = date_object.month
@@ -55,7 +56,8 @@ def dateSelector(browser_, sel_date_, index_):
 def crwalingweather(city, sel_date):
     options = webdriver.ChromeOptions()
     options.add_experimental_option('detach', True)
-    options.add_argument("headless")
+    # options.add_argument("headless")
+    options.add_argument("lang=en")
     browser = webdriver.Chrome(options=options)
     browser.get("https://www.timeanddate.com/weather/south-korea/seoul")
 
@@ -81,7 +83,7 @@ def crwalingweather(city, sel_date):
     time.sleep(0.5)
     cur_date = browser.find_element(By.CSS_SELECTOR, "div.weatherTooltip div.date")
     print(f'cur city : {cur_date.text} ')
-    cur_year, cur_month, cur_day = dataReadertwo(cur_date.text)
+    cur_year, cur_month, cur_day = dateReader(cur_date.text)
 
     print(f"year : {cur_year}, month : {cur_month}, day : {cur_day}")
 
