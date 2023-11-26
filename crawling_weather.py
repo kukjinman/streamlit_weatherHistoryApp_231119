@@ -4,6 +4,9 @@ from selenium import webdriver
 import time
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
 
 def dateReader(date_):
     parts = date_.split(',', 2)
@@ -41,13 +44,18 @@ def crwalingweather(city,sel_date):
 
     options = webdriver.ChromeOptions()
     options.add_experimental_option('detach', True)
+    options.add_argument("headless")
     browser = webdriver.Chrome(options=options)
     browser.get("https://www.timeanddate.com/weather/south-korea/seoul")
 
-    input = browser.find_element(By.CSS_SELECTOR, "form.bn-header__searchbox.picker-city.noprint input")
+    input = WebDriverWait(browser, 5).until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, "form.bn-header__searchbox.picker-city.noprint input"))
+    )
     input.send_keys(city)
-    time.sleep(0.5)
-    button = browser.find_element(By.CSS_SELECTOR, "button.picker-city__button")
+
+    button = WebDriverWait(browser, 5).until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, "button.picker-city__button"))
+    )
     button.click()
 
     time.sleep(0.5)
