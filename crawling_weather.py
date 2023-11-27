@@ -1,3 +1,4 @@
+import re
 from datetime import datetime  # 이 줄을 추가해주세요
 
 from selenium import webdriver
@@ -19,17 +20,14 @@ def dateReader(date_):
 
 
 def dataReaderKorean(date_):
-    parts = date_.split(' — ', 2)
-    date_string_modified = parts[0]
-    date_, time_ = date_string_modified.split(', ')
-
-    date_object = datetime.strptime(date_, "%Y년 %m월 %d일 %A")
-
-    year = date_object.year
-    month = date_object.month
-    day = date_object.day
-
-    return year, month, day
+    match = re.search(r'(\d{4})년 (\d{1,2})월 (\d{1,2})일', date_)
+    if match:
+        year = int(match.group(1))
+        month = int(match.group(2))
+        day = int(match.group(3))
+        return year, month, day
+    else:
+        return None
 
 
 def dateSelector(browser_, sel_date_, index_):
@@ -56,8 +54,7 @@ def dateSelector(browser_, sel_date_, index_):
 def crwalingweather(city, sel_date):
     options = webdriver.ChromeOptions()
     options.add_experimental_option('detach', True)
-    # options.add_argument("headless")
-    options.add_argument("lang=en")
+    options.add_argument("headless")
     browser = webdriver.Chrome(options=options)
     browser.get("https://www.timeanddate.com/weather/south-korea/seoul")
 
@@ -83,7 +80,7 @@ def crwalingweather(city, sel_date):
     time.sleep(0.5)
     cur_date = browser.find_element(By.CSS_SELECTOR, "div.weatherTooltip div.date")
     print(f'cur city : {cur_date.text} ')
-    cur_year, cur_month, cur_day = dateReader(cur_date.text)
+    cur_year, cur_month, cur_day = dataReaderKorean(cur_date.text)
 
     print(f"year : {cur_year}, month : {cur_month}, day : {cur_day}")
 
